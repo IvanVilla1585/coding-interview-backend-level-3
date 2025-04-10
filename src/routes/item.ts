@@ -1,4 +1,5 @@
-import Controller from '../Item/Controller.js'
+import controller from '../Item/Controller.js'
+import errorResponse from '../schemas/errorResponse.js'
 import { id, filter, create, update, item, filterResponse } from '../schemas/item.js'
 
 // types
@@ -11,11 +12,15 @@ export default function (server: FastifyInstance) {
       schema: {
         querystring: filter,
         response: {
-          200: filterResponse
+          200: filterResponse,
+          400: errorResponse,
+          404: errorResponse,
+          422: errorResponse,
+          500: errorResponse
         }
       }
     },
-    Controller.find
+    controller.find.bind(controller)
   )
 
   server.get(
@@ -24,11 +29,15 @@ export default function (server: FastifyInstance) {
       schema: {
         params: id,
         response: {
-          200: item
+          200: item,
+          400: errorResponse,
+          404: errorResponse,
+          422: errorResponse,
+          500: errorResponse
         }
       }
     },
-    Controller.findById
+    controller.findById.bind(controller)
   )
 
   server.post(
@@ -37,11 +46,15 @@ export default function (server: FastifyInstance) {
       schema: {
         body: create,
         response: {
-          201: item
+          201: item,
+          400: errorResponse,
+          404: errorResponse,
+          422: errorResponse,
+          500: errorResponse
         }
       }
     },
-    Controller.create
+    controller.create.bind(controller)
   )
 
   server.patch(
@@ -51,20 +64,30 @@ export default function (server: FastifyInstance) {
         params: id,
         body: update,
         response: {
-          200: item
+          200: item,
+          400: errorResponse,
+          404: errorResponse,
+          422: errorResponse,
+          500: errorResponse
         }
       }
     },
-    Controller.updateById
+    controller.updateById.bind(controller)
   )
 
   server.delete(
     '/items/:id',
     {
       schema: {
-        params: id
+        params: id,
+        response: {
+          400: errorResponse,
+          404: errorResponse,
+          422: errorResponse,
+          500: errorResponse
+        }
       }
     },
-    Controller.deleteById
+    controller.deleteById.bind(controller)
   )
 }
