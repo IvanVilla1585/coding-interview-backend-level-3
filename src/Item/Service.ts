@@ -1,14 +1,20 @@
 import * as Boom from '@hapi/boom'
 
-import Repository from './Repository.js'
+import ItemRepository from './Repository.js'
 
 // types
-// import IBaseService from '../interfaces/IBaseService'
+import IBaseService from '../interfaces/IBaseService'
 import { Item, ItemFilters, ItemInput, ItemResponse } from '../interfaces/entities/Item'
 
-class Service {
-  static async find (params: ItemFilters): Promise<ItemResponse> {
-    const { rows, count } = await Repository.findByFilters(params)
+class Service implements IBaseService<Item, ItemFilters, ItemInput, ItemResponse> {
+  private Repository: typeof ItemRepository
+
+  constructor (Repository: typeof ItemRepository) {
+    this.Repository = Repository
+  }
+
+  async find (params: ItemFilters): Promise<ItemResponse> {
+    const { rows, count } = await this.Repository.findByFilters(params)
 
     return {
       data: rows,
@@ -16,8 +22,8 @@ class Service {
     }
   }
 
-  static async findById (id: number): Promise<Item> {
-    const item = await Repository.findByPk(id)
+  async findById (id: number): Promise<Item> {
+    const item = await this.Repository.findByPk(id)
 
     if (!item) {
       throw Boom.notFound("The item with this id does'n exist")
@@ -26,18 +32,18 @@ class Service {
     return item
   }
 
-  static async create (data: ItemInput): Promise<Item> {
-    const item = await Repository.findByName(data.name)
+  async create (data: ItemInput): Promise<Item> {
+    const item = await this.Repository.findByName(data.name)
 
     if (item) {
       throw Boom.badData('The item with this name already exists')
     }
 
-    return Repository.create(data)
+    return this.Repository.create(data)
   }
 
-  static async updateById (id: number, data: ItemInput): Promise<Item> {
-    const item = await Repository.findByPk(id)
+  async updateById (id: number, data: ItemInput): Promise<Item> {
+    const item = await this.Repository.findByPk(id)
 
     if (!item) {
       throw Boom.notFound("The item with this id does'n exist")
@@ -56,8 +62,8 @@ class Service {
     return response
   }
 
-  static async deleteById (id: number): Promise<Item> {
-    const item = await Repository.findByPk(id)
+  async deleteById (id: number): Promise<Item> {
+    const item = await this.Repository.findByPk(id)
 
     if (!item) {
       throw Boom.notFound("The item with this id does'n exist")
@@ -69,4 +75,4 @@ class Service {
   }
 }
 
-export default Service
+export default new Service(ItemRepository)
