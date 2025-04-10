@@ -1,8 +1,14 @@
-// See https://containers.dev/implementors/json_reference/ for configuration reference
+// For format details, see https://aka.ms/devcontainer.json.
 {
 	"name": "Coding Interview Backend Level 3",
-	"build": {
-		"dockerfile": "Dockerfile"
+	"dockerComposeFile": [
+		"../docker-compose.yml"
+	],
+	"service": "app",
+	"workspaceFolder": "/usr/src/app",
+	"features": {
+		"ghcr.io/devcontainers-extra/features/node-asdf:0": {},
+		"ghcr.io/devcontainers-extra/features/typescript:2": {}
 	},
-  "remoteUser": "node"
+	"forwardPorts": [5432]
 }
