@@ -1,4 +1,4 @@
-import Model from '../libs/db/models/Item.js'
+import SequelizeModel from '../libs/db/models/Item.js'
 
 // types
 import { FindAndCountOptions } from 'sequelize'
@@ -10,7 +10,7 @@ interface RowsFilter {
   count: number
 }
 
-class ItemModel extends Model {
+class ItemModel extends SequelizeModel {
   static async findByFilters ({ name, limit, offset }: ItemFilters): Promise<RowsFilter> {
     const query: FindAndCountOptions = {}
 
